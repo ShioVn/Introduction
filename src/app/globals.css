@@ -1,26 +1,76 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
+@theme {
+  --color-pastel-pink: #ffd1dc;
+  --color-pastel-purple: #e6e6fa;
+  --color-pastel-mint: #b2fba5;
+  --color-pastel-cream: #fdfbf7;
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --font-sans: var(--font-sans-cute);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #fdfbf7; /* pastel cream */
+  --foreground: #5a4b5e; /* soft dark purple-ish text for better contrast on pastel */
+  --primary: #ffd1dc; /* pastel pink */
+  --primary-foreground: #5a4b5e;
+  --secondary: #e6e6fa; /* pastel purple */
+  --secondary-foreground: #5a4b5e;
+  --accent: #b2fba5; /* pastel mint */
+  --accent-foreground: #5a4b5e;
+}
+
+.dark {
+  --background: #23212b; /* soft dark purple/grey */
+  --foreground: #fdfbf7; /* pastel cream text */
+  --primary: #d495a8; /* darker pink */
+  --primary-foreground: #fdfbf7;
+  --secondary: #6e6b8c; /* darker purple */
+  --secondary-foreground: #fdfbf7;
+  --accent: #7fae82; /* darker mint */
+  --accent-foreground: #23212b;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), sans-serif;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Subtle dot-grid texture */
+  background-image: radial-gradient(circle, rgba(255,209,220,0.35) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
+
+.dark body {
+  background-image: radial-gradient(circle, rgba(212,149,168,0.12) 1px, transparent 1px);
+}
+
+/* Custom scrollbar - invisible for lenis */
+::-webkit-scrollbar {
+  display: none;
+}
+html {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+  scroll-behavior: smooth;
+}
+
+/* Offset scroll for fixed navbar */
+section[id] {
+  scroll-margin-top: 72px;
+}
+
+/* Improve image quality rendering */
+img {
+  image-rendering: -webkit-optimize-contrast;
+}
+
