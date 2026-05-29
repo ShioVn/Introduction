@@ -116,7 +116,7 @@ export const PORTFOLIO_CONFIG = {
     {
       id: "roblox",
       name: "Roblox",
-      inGameName: "ShioVn",  // TODO: Update
+      inGameName: "idnoname001",  // TODO: Update
       rank: "Casual player",
       icon: "https://img.icons8.com/?size=100&id=62158&format=png&color=000000",
       color: "#E8192C",
@@ -125,7 +125,7 @@ export const PORTFOLIO_CONFIG = {
     {
       id: "minecraft",
       name: "Minecraft",
-      inGameName: "ShioVn",  // TODO: Update
+      inGameName: "Zz_Shio_zZ",  // TODO: Update
       rank: "Survival/PVP enjoyer",
       icon: "https://img.icons8.com/?size=100&id=vcOcDfBIV6vB&format=png&color=000000",
       color: "#5D9B47",
