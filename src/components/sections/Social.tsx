@@ -83,8 +83,7 @@ export function Social() {
               whileTap={{ scale: 0.96 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.45, delay: idx * 0.1, type: "spring", stiffness: 260 }}
-              className="group flex flex-col items-center justify-center gap-4 p-8 rounded-[2.5rem] shadow-lg border border-white/20 relative overflow-hidden"
-              style={{ background: "rgba(255,255,255,0.55)" }}
+              className="group flex flex-col items-center justify-center gap-4 p-8 rounded-[2.5rem] shadow-lg border border-white/20 dark:border-white/5 relative overflow-hidden bg-white/55 dark:bg-black/30 backdrop-blur-lg"
             >
               {/* Gradient background reveal on hover - inline style fixes Tailwind dynamic class issue */}
               <div
@@ -104,9 +103,18 @@ export function Social() {
                 className="relative z-10 w-20 h-20 rounded-3xl flex items-center justify-center bg-white dark:bg-gray-800 shadow-md group-hover:scale-110 group-hover:rotate-6 transition-all duration-400"
               >
                 <Icon
-                  className="w-10 h-10 transition-colors duration-400"
-                  // @ts-ignore
-                  style={{ color: social.color }}
+                  className={`w-10 h-10 transition-colors duration-400 ${
+                    social.id === "tiktok"
+                      ? "text-black dark:text-white"
+                      : social.id === "github"
+                        ? "text-gray-800 dark:text-white"
+                        : ""
+                  }`}
+                  style={
+                    social.id === "tiktok" || social.id === "github"
+                      ? undefined
+                      : { color: social.color }
+                  }
                 />
               </div>
 

@@ -82,14 +82,14 @@ export function Hobbies() {
             <motion.div 
               animate={{ y: [-10, 10, -10], rotate: [-10, 10, -10] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              className="absolute -top-6 -right-6 w-16 h-16 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-primary/20 flex items-center justify-center text-2xl"
+              className="absolute -top-6 -right-6 w-16 h-16 bg-orange-50 dark:bg-orange-100 rounded-full shadow-lg border border-orange-200 flex items-center justify-center text-2xl"
             >
               ☕
             </motion.div>
             <motion.div 
               animate={{ y: [10, -10, 10], rotate: [10, -10, 10] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-              className="absolute -bottom-6 -left-6 w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-primary/20 flex items-center justify-center text-2xl"
+              className="absolute -bottom-6 -left-6 w-16 h-16 bg-indigo-50 dark:bg-indigo-100 rounded-2xl shadow-lg border border-indigo-200 flex items-center justify-center text-2xl"
             >
               🎧
             </motion.div>

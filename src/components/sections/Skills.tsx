@@ -52,17 +52,25 @@ export function Skills() {
             >
               {/* Glow on hover — inline style for correct color */}
               <div
-                className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10"
-                style={{ backgroundColor: hexToRgba(safeColor, 0.25) }}
+                className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl -z-10 ${
+                  safeColor === "#000000" ? "bg-black/20 dark:bg-white/20" : ""
+                }`}
+                style={safeColor === "#000000" ? undefined : { backgroundColor: hexToRgba(safeColor, 0.25) }}
               />
 
               {/* Icon circle */}
               <div
-                className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black shadow-sm border border-white/50 dark:border-white/10 transition-transform group-hover:scale-110 duration-300"
-                style={{
-                  backgroundColor: hexToRgba(safeColor, 0.15),
-                  color: safeColor,
-                }}
+                className={`w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-black shadow-sm border border-white/50 dark:border-white/10 transition-transform group-hover:scale-110 duration-300 ${
+                  safeColor === "#000000" ? "text-black dark:text-white bg-black/5 dark:bg-white/10" : ""
+                }`}
+                style={
+                  safeColor === "#000000"
+                    ? undefined
+                    : {
+                        backgroundColor: hexToRgba(safeColor, 0.15),
+                        color: safeColor,
+                      }
+                }
               >
                 {skill.emoji}
               </div>
@@ -79,8 +87,8 @@ export function Skills() {
                   whileInView={{ width: `${skill.level}%` }}
                   viewport={{ once: true }}
                   transition={{ duration: 1.2, delay: 0.4 + index * 0.08, ease: "easeOut" }}
-                  className="h-full rounded-full"
-                  style={{ backgroundColor: safeColor }}
+                  className={`h-full rounded-full ${safeColor === "#000000" ? "bg-black dark:bg-white" : ""}`}
+                  style={safeColor === "#000000" ? undefined : { backgroundColor: safeColor }}
                 />
               </div>
               <span className="text-xs font-bold text-foreground/40">{skill.level}%</span>
