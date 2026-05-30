@@ -164,7 +164,7 @@ export const translations = {
     },
     gaming: {
       title: "Gaming Hub",
-      subtitle: "// GG no re!",
+      subtitle: "Chơi đê ngại gì!",
       description: "Khi không code, mình sẽ đi cày game. Đây là các game mình chơi và tên In-game:",
       inGameName: "Tên In-game",
       rank: "Rank",
