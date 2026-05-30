@@ -76,3 +76,9 @@ img {
   image-rendering: -webkit-optimize-contrast;
 }
 
+/* ── Hide native cursor globally on desktop (pointer: fine) ── */
+@media (pointer: fine) {
+  *, *::before, *::after {
+    cursor: none !important;
+  }
+}

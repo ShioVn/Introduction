@@ -1,90 +1,92 @@
 "use client"
 // ═══════════════════════════════════════════════
-// CUSTOM CURSOR — Upgraded: pink dot 8px,
-// scales to 20px on hover over button/card/a,
-// + trailing star icon
+// CUSTOM CURSOR — Optimized: uses left/top CSS
+// via requestAnimationFrame for correct positioning,
+// no spring lag on position (only on size)
 // ═══════════════════════════════════════════════
-import { useState, useEffect } from "react"
-import { motion, useMotionValue, useSpring } from "framer-motion"
+import { useState, useEffect, useRef } from "react"
+import { motion } from "framer-motion"
 
 export function CustomCursor() {
+  const dotRef = useRef<HTMLDivElement>(null)
+  const ringRef = useRef<HTMLDivElement>(null)
   const [isHovering, setIsHovering] = useState(false)
-
-  const rawX = useMotionValue(-200)
-  const rawY = useMotionValue(-200)
-
-  // Smooth trailing with spring — dot is snappier, ring follows slower
-  const dotX = useSpring(rawX, { stiffness: 700, damping: 30 })
-  const dotY = useSpring(rawY, { stiffness: 700, damping: 30 })
-  const ringX = useSpring(rawX, { stiffness: 180, damping: 22 })
-  const ringY = useSpring(rawY, { stiffness: 180, damping: 22 })
+  const pos = useRef({ x: -200, y: -200 })
+  const rafId = useRef<number | null>(null)
 
   useEffect(() => {
-    const updatePos = (e: MouseEvent) => {
-      rawX.set(e.clientX)
-      rawY.set(e.clientY)
+    // Use RAF to update cursor position — avoids React re-renders per mousemove
+    const updateDOM = () => {
+      if (dotRef.current) {
+        dotRef.current.style.left = `${pos.current.x}px`
+        dotRef.current.style.top = `${pos.current.y}px`
+      }
+      if (ringRef.current) {
+        ringRef.current.style.left = `${pos.current.x}px`
+        ringRef.current.style.top = `${pos.current.y}px`
+      }
+      rafId.current = requestAnimationFrame(updateDOM)
+    }
+    rafId.current = requestAnimationFrame(updateDOM)
+
+    const onMove = (e: MouseEvent) => {
+      pos.current = { x: e.clientX, y: e.clientY }
     }
 
-    const handleOver = (e: MouseEvent) => {
+    const onOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement
-      const interactive = target.closest("a, button, [data-interactive], .group, [role='button']")
+      const interactive = target.closest("a, button, [data-interactive], [role='button'], label, select")
       setIsHovering(!!interactive)
     }
 
-    window.addEventListener("mousemove", updatePos)
-    window.addEventListener("mouseover", handleOver)
+    window.addEventListener("mousemove", onMove, { passive: true })
+    window.addEventListener("mouseover", onOver, { passive: true })
+
     return () => {
-      window.removeEventListener("mousemove", updatePos)
-      window.removeEventListener("mouseover", handleOver)
+      window.removeEventListener("mousemove", onMove)
+      window.removeEventListener("mouseover", onOver)
+      if (rafId.current) cancelAnimationFrame(rafId.current)
     }
-  }, [rawX, rawY])
+  }, [])
 
   return (
     <>
-      <style dangerouslySetInnerHTML={{__html: `
-        @media (pointer: fine) {
-          body, a, button, input, select, textarea {
-            cursor: none !important;
-          }
-        }
-      `}} />
-
-      {/* Outer glow ring — bigger, follows slower */}
+      {/* Ring — uses Framer Motion only for size/opacity transitions, position is via CSS */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9998] hidden sm:block rounded-full border border-pink-400/60"
+        ref={ringRef}
+        className="fixed pointer-events-none z-[9998] hidden sm:block rounded-full border border-pink-400/50"
         style={{
-          x: ringX,
-          y: ringY,
           translateX: "-50%",
           translateY: "-50%",
+          willChange: "left, top, width, height",
         }}
         animate={{
-          width: isHovering ? 40 : 28,
-          height: isHovering ? 40 : 28,
-          opacity: isHovering ? 0.5 : 0.3,
+          width: isHovering ? 38 : 26,
+          height: isHovering ? 38 : 26,
+          opacity: isHovering ? 0.6 : 0.35,
         }}
-        transition={{ duration: 0.25 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
       />
 
-      {/* Inner dot — 8px, pink #ff6b6b, snappy */}
+      {/* Dot — #ff6b6b, 8px normally, 20px on hover */}
       <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999] hidden sm:block rounded-full"
+        ref={dotRef}
+        className="fixed pointer-events-none z-[9999] hidden sm:block rounded-full"
         style={{
-          x: dotX,
-          y: dotY,
+          backgroundColor: "#ff6b6b",
           translateX: "-50%",
           translateY: "-50%",
-          backgroundColor: "#ff6b6b",
+          willChange: "left, top, width, height",
         }}
         animate={{
           width: isHovering ? 20 : 8,
           height: isHovering ? 20 : 8,
-          opacity: isHovering ? 0.55 : 0.9,
+          opacity: isHovering ? 0.5 : 0.9,
           boxShadow: isHovering
-            ? "0 0 18px 6px rgba(255,107,107,0.45)"
-            : "0 0 6px 2px rgba(255,107,107,0.35)",
+            ? "0 0 16px 5px rgba(255,107,107,0.4)"
+            : "0 0 5px 1px rgba(255,107,107,0.3)",
         }}
-        transition={{ duration: 0.2 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
       />
     </>
   )

@@ -1,64 +1,63 @@
 "use client"
 // ═══════════════════════════════════════════════
-// HERO SECTION — Enhanced: Stagger name, typewriter role,
-// glow cursor, counter stats, smooth scroll CTA
+// HERO SECTION — Optimized: removed heavy glow cursor,
+// reduced 3D particles, lazy canvas, memoized scene
 // ═══════════════════════════════════════════════
 import { useLanguage } from "@/components/language-provider"
 import { PORTFOLIO_CONFIG } from "@/config/constants"
-import { motion, useMotionValue, useSpring, useInView } from "framer-motion"
+import { motion, useInView } from "framer-motion"
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls, Float, Stars, Sphere, MeshDistortMaterial, Torus } from "@react-three/drei"
-import { Suspense, useEffect, useRef, useState } from "react"
+import { Suspense, useEffect, useRef, useState, memo } from "react"
 import { ChevronDown } from "lucide-react"
 
-// ─── 3D Background Scene ─────────────────────
+// ─── Fixed positions — no Math.random in render ──
 const PARTICLE_POSITIONS: [number, number, number][] = [
-  [3.2, 2.1, -4], [-4.5, -1.5, -5], [2.8, -2.8, -3.5],
-  [-2.1, 3.5, -4.5], [5.1, 0.5, -5], [-5.2, 2.5, -3],
-  [1.5, -3.8, -4], [-3.2, -3.1, -5],
+  [3.2, 2.1, -4], [-4.5, -1.5, -5], [2.8, -2.8, -3.5], [-2.1, 3.5, -4.5],
 ]
 
-function Scene3D() {
+// Memoized 3D scene — never re-renders from parent state changes
+const Scene3D = memo(function Scene3D() {
   return (
     <>
       <ambientLight intensity={0.4} />
-      <directionalLight position={[10, 10, 5]} intensity={1.2} color="#ffd1dc" />
-      <pointLight position={[-10, -5, -5]} intensity={0.5} color="#e6e6fa" />
+      <directionalLight position={[10, 10, 5]} intensity={1.0} color="#ffd1dc" />
 
-      <Float speed={1.4} rotationIntensity={0.6} floatIntensity={1.5}>
-        <Sphere args={[1.8, 64, 64]} position={[3.5, 0, -2]}>
-          <MeshDistortMaterial color="#ffd1dc" distort={0.4} speed={2} roughness={0.1} metalness={0.3} opacity={0.7} transparent />
+      <Float speed={1.2} rotationIntensity={0.5} floatIntensity={1.2}>
+        <Sphere args={[1.8, 32, 32]} position={[3.5, 0, -2]}>
+          <MeshDistortMaterial color="#ffd1dc" distort={0.35} speed={1.5} roughness={0.15} metalness={0.2} opacity={0.7} transparent />
         </Sphere>
       </Float>
 
-      <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-        <Sphere args={[1.0, 32, 32]} position={[-4, 1.5, -1]}>
-          <MeshDistortMaterial color="#b2fba5" distort={0.5} speed={3} roughness={0} metalness={0.5} opacity={0.6} transparent />
+      <Float speed={1.6} rotationIntensity={0.8} floatIntensity={1.5}>
+        <Sphere args={[0.9, 24, 24]} position={[-4, 1.5, -1]}>
+          <MeshDistortMaterial color="#b2fba5" distort={0.4} speed={2} roughness={0.1} metalness={0.4} opacity={0.6} transparent />
         </Sphere>
       </Float>
 
-      <Float speed={1.8} rotationIntensity={2} floatIntensity={1}>
-        <Torus args={[1.2, 0.3, 16, 60]} position={[-3, -2, -1]} rotation={[0.5, 0.5, 0]}>
-          <meshStandardMaterial color="#e6e6fa" metalness={0.8} roughness={0.2} />
+      <Float speed={1.5} rotationIntensity={1.5} floatIntensity={0.8}>
+        <Torus args={[1.2, 0.3, 12, 40]} position={[-3, -2, -1]} rotation={[0.5, 0.5, 0]}>
+          <meshStandardMaterial color="#e6e6fa" metalness={0.7} roughness={0.3} />
         </Torus>
       </Float>
 
+      {/* Reduced to 4 particles (was 8) */}
       {PARTICLE_POSITIONS.map((pos, i) => (
-        <Float key={i} speed={1 + i * 0.3} rotationIntensity={0.5} floatIntensity={1}>
-          <Sphere args={[0.15, 16, 16]} position={pos}>
-            <meshStandardMaterial color={["#ffd1dc", "#e6e6fa", "#b2fba5", "#fdfbf7"][i % 4]} metalness={0.5} roughness={0.2} />
+        <Float key={i} speed={1 + i * 0.4} rotationIntensity={0.4} floatIntensity={0.8}>
+          <Sphere args={[0.12, 10, 10]} position={pos}>
+            <meshStandardMaterial color={["#ffd1dc", "#e6e6fa", "#b2fba5", "#fdfbf7"][i % 4]} metalness={0.4} roughness={0.3} />
           </Sphere>
         </Float>
       ))}
 
-      <Stars radius={100} depth={60} count={3000} factor={4} saturation={0.5} fade speed={0.8} />
-      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.3} />
+      <Stars radius={80} depth={40} count={1500} factor={3} saturation={0.3} fade speed={0.5} />
+      <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.2} />
     </>
   )
-}
+})
 
-// ─── Floating GIF element ─────────────────────
-function FloatingGif({ src, alt, className, animProps }: {
+// ─── Floating GIF — memoized ──────────────────
+const FloatingGif = memo(function FloatingGif({ src, alt, className, animProps }: {
   src: string; alt: string; className: string;
   animProps: Record<string, unknown>
 }) {
@@ -70,12 +69,12 @@ function FloatingGif({ src, alt, className, animProps }: {
       {...animProps}
     />
   )
-}
+})
 
-// ─── Typewriter hook (loops every `pause` ms) ──
+// ─── Typewriter hook — loops every `pause` ms ──
 function useTypewriter(text: string, speed = 60, pause = 5000) {
   const [displayed, setDisplayed] = useState("")
-  const [phase, setPhase] = useState<"typing" | "waiting" | "erasing">("typing")
+  const [phase, setPhase] = useState<"typing" | "erasing">("typing")
 
   useEffect(() => {
     setDisplayed("")
@@ -105,69 +104,50 @@ function useTypewriter(text: string, speed = 60, pause = 5000) {
   return { displayed, isTyping: phase === "typing" }
 }
 
-// ─── Animated counter ──────────────────────────
+// ─── Animated counter — only fires once when in view ──
 function AnimatedCounter({ target, suffix = "+" }: { target: number; suffix?: string }) {
   const ref = useRef<HTMLSpanElement>(null)
   const isInView = useInView(ref, { once: true })
   const [count, setCount] = useState(0)
+  const started = useRef(false)
 
   useEffect(() => {
-    if (!isInView) return
-    let start = 0
+    if (!isInView || started.current) return
+    started.current = true
     const duration = 1500
-    const step = target / (duration / 16)
+    const steps = 40
+    const stepTime = duration / steps
+    const increment = target / steps
+    let current = 0
+    let step = 0
     const timer = setInterval(() => {
-      start += step
-      if (start >= target) {
+      step++
+      current = Math.round(increment * step)
+      if (step >= steps) {
         setCount(target)
         clearInterval(timer)
       } else {
-        setCount(Math.floor(start))
+        setCount(current)
       }
-    }, 16)
+    }, stepTime)
     return () => clearInterval(timer)
   }, [isInView, target])
 
   return <span ref={ref}>{count}{suffix}</span>
 }
 
-// ─── Stagger container variants ───────────────
+// ─── Stagger variants ──────────────────────────
 const nameContainer = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.08, delayChildren: 0.5 } },
 }
 const nameLetter = {
   hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 260, damping: 20 } },
+  visible: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 240, damping: 22 } },
 }
 
 export function Hero() {
   const { t } = useLanguage()
-  const sectionRef = useRef<HTMLElement>(null)
-
-  // Pink glow cursor tracking
-  const rawX = useMotionValue(-200)
-  const rawY = useMotionValue(-200)
-  const glowX = useSpring(rawX, { stiffness: 120, damping: 18 })
-  const glowY = useSpring(rawY, { stiffness: 120, damping: 18 })
-  const [showGlow, setShowGlow] = useState(false)
-
-  useEffect(() => {
-    const section = sectionRef.current
-    if (!section) return
-    const onMove = (e: MouseEvent) => {
-      const rect = section.getBoundingClientRect()
-      rawX.set(e.clientX - rect.left)
-      rawY.set(e.clientY - rect.top)
-    }
-    section.addEventListener("mousemove", onMove)
-    section.addEventListener("mouseenter", () => setShowGlow(true))
-    section.addEventListener("mouseleave", () => setShowGlow(false))
-    return () => {
-      section.removeEventListener("mousemove", onMove)
-    }
-  }, [rawX, rawY])
-
   const { displayed: typedRole, isTyping } = useTypewriter(t.hero.role, 55, 5000)
 
   const stats = [
@@ -179,38 +159,24 @@ export function Hero() {
   const nickname = PORTFOLIO_CONFIG.personalInfo.nickname
 
   const handleScrollDown = () => {
-    const aboutSection = document.getElementById("about")
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: "smooth" })
-    }
+    document.getElementById("about")?.scrollIntoView({ behavior: "smooth" })
   }
 
   return (
-    <section ref={sectionRef} className="relative w-full min-h-screen overflow-hidden flex flex-col items-center justify-center">
+    <section className="relative w-full min-h-screen overflow-hidden flex flex-col items-center justify-center">
       {/* ── 3D Canvas Background ── */}
       <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 6], fov: 55 }}>
+        <Canvas
+          camera={{ position: [0, 0, 6], fov: 55 }}
+          dpr={[1, 1.5]}
+          performance={{ min: 0.5 }}
+          gl={{ antialias: false, powerPreference: "high-performance" }}
+        >
           <Suspense fallback={null}>
             <Scene3D />
           </Suspense>
         </Canvas>
       </div>
-
-      {/* ── Pink glow cursor ── */}
-      {showGlow && (
-        <motion.div
-          className="absolute z-[5] pointer-events-none rounded-full"
-          style={{
-            x: glowX,
-            y: glowY,
-            translateX: "-50%",
-            translateY: "-50%",
-            width: 280,
-            height: 280,
-            background: "radial-gradient(circle, rgba(255,107,107,0.18) 0%, rgba(255,107,107,0.04) 60%, transparent 100%)",
-          }}
-        />
-      )}
 
       {/* ── Gradient overlay ── */}
       <div className="absolute inset-0 z-1 bg-gradient-to-b from-transparent via-background/20 to-background/80 pointer-events-none" />
@@ -250,7 +216,7 @@ export function Hero() {
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.2 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary/30 backdrop-blur-sm border border-primary/50 text-sm font-bold text-foreground/90 shadow-lg"
         >
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
@@ -262,7 +228,7 @@ export function Hero() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
             className="text-xl md:text-2xl font-bold text-foreground/70 mb-2"
           >
             {t.hero.greeting}
@@ -280,7 +246,7 @@ export function Hero() {
                 key={i}
                 variants={nameLetter}
                 className="inline-block text-transparent bg-clip-text bg-gradient-to-br from-pink-400 via-purple-400 to-green-400"
-                whileHover={{ y: -12, scale: 1.15, transition: { type: "spring", stiffness: 400 } }}
+                whileHover={{ y: -10, scale: 1.12, transition: { type: "spring", stiffness: 350, damping: 18 } }}
               >
                 {char}
               </motion.span>
@@ -290,7 +256,7 @@ export function Hero() {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
             className="text-xl md:text-2xl font-semibold text-foreground/80 mt-2"
           >
             {PORTFOLIO_CONFIG.personalInfo.fullName}
@@ -301,7 +267,7 @@ export function Hero() {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
+          transition={{ duration: 0.6, delay: 1.1 }}
           className="text-base md:text-lg text-foreground/70 max-w-md min-h-[2rem] font-medium"
         >
           {typedRole}
@@ -316,18 +282,15 @@ export function Hero() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 1.4 }}
+          transition={{ duration: 0.7, delay: 1.3 }}
           className="flex gap-6 md:gap-10 mt-4"
         >
           {stats.map((stat) => (
             <motion.div
               key={stat.label}
               className="flex flex-col items-center bg-white/20 dark:bg-white/5 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/30 shadow-inner cursor-default"
-              whileHover={{
-                scale: 1.1,
-                x: [0, -4, 4, -4, 4, 0],
-                transition: { x: { duration: 0.4 }, scale: { duration: 0.2 } }
-              }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.96 }}
             >
               <span className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
                 <AnimatedCounter target={stat.value} />
@@ -338,10 +301,10 @@ export function Hero() {
         </motion.div>
       </div>
 
-      {/* ── Scroll indicator — smooth scroll on click ── */}
+      {/* ── Scroll indicator ── */}
       <motion.button
         onClick={handleScrollDown}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 text-foreground/50 cursor-pointer hover:text-foreground/80 transition-colors bg-transparent border-none"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 text-foreground/50 hover:text-foreground/80 transition-colors bg-transparent border-none"
         animate={{ y: [0, 8, 0] }}
         transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
         whileHover={{ scale: 1.1 }}
