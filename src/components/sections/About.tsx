@@ -1,8 +1,7 @@
 "use client"
 // ═══════════════════════════════════════════════
-// ABOUT SECTION — Scrapbook / personal diary style
-// Features: polaroid cards, sticky notes, fun facts,
-// floating GIF, traits tags, typing bio
+// ABOUT SECTION — Enhanced: traits stagger from left,
+// hover colored glow, bio typing effect
 // ═══════════════════════════════════════════════
 import { useLanguage } from "@/components/language-provider"
 import { PORTFOLIO_CONFIG } from "@/config/constants"
@@ -50,6 +49,14 @@ function StickyNote({ children, rotate, color, delay }: {
   )
 }
 
+// Trait colors for glow effect
+const TRAIT_COLORS = [
+  { bg: "from-orange-100 to-red-100 dark:from-orange-200 dark:to-red-200", glow: "rgba(251,146,60,0.5)", text: "text-orange-900 dark:text-orange-950" },
+  { bg: "from-blue-100 to-cyan-100 dark:from-blue-200 dark:to-cyan-200", glow: "rgba(96,165,250,0.5)", text: "text-blue-900 dark:text-blue-950" },
+  { bg: "from-green-100 to-emerald-100 dark:from-green-200 dark:to-emerald-200", glow: "rgba(52,211,153,0.5)", text: "text-green-900 dark:text-green-950" },
+  { bg: "from-purple-100 to-pink-100 dark:from-purple-200 dark:to-pink-200", glow: "rgba(192,132,252,0.5)", text: "text-purple-900 dark:text-purple-950" },
+]
+
 export function About() {
   const { t } = useLanguage()
   const typedBio = useTyping(t.about.description)
@@ -80,7 +87,6 @@ export function About() {
             transition={{ duration: 0.7 }}
             className="relative bg-white/60 dark:bg-black/30 backdrop-blur-lg rounded-3xl p-8 border border-primary/20 shadow-xl overflow-hidden"
           >
-            {/* Deco circle */}
             <div className="absolute -top-8 -right-8 w-32 h-32 bg-pink-200/40 rounded-full blur-2xl" />
             <p className="relative z-10 text-lg leading-relaxed font-medium text-foreground/85 min-h-[120px]">
               {typedBio}
@@ -92,23 +98,31 @@ export function About() {
             </p>
           </motion.div>
 
-          {/* Traits */}
+          {/* Traits — stagger from left + colored hover glow */}
           <div>
             <p className="text-sm font-bold text-foreground/50 uppercase tracking-widest mb-3">Traits</p>
             <div className="flex flex-wrap gap-3">
-              {t.about.traits.map((trait, i) => (
-                <motion.span
-                  key={trait}
-                  initial={{ opacity: 0, scale: 0.7 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  whileHover={{ scale: 1.1, y: -3 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="px-5 py-2 bg-gradient-to-r from-pink-100 to-purple-100 dark:from-pink-200 dark:to-purple-200 rounded-full text-sm font-bold border border-primary/20 text-pink-900 dark:text-pink-950 cursor-default shadow-sm"
-                >
-                  {trait}
-                </motion.span>
-              ))}
+              {t.about.traits.map((trait, i) => {
+                const colors = TRAIT_COLORS[i % TRAIT_COLORS.length]
+                return (
+                  <motion.span
+                    key={trait}
+                    initial={{ opacity: 0, x: -40 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1, type: "spring", stiffness: 200, damping: 20 }}
+                    whileHover={{
+                      scale: 1.12,
+                      rotate: i % 2 === 0 ? 2 : -2,
+                      boxShadow: `0 0 20px 4px ${colors.glow}`,
+                      transition: { duration: 0.2 }
+                    }}
+                    className={`px-5 py-2 bg-gradient-to-r ${colors.bg} rounded-full text-sm font-bold border border-primary/20 ${colors.text} cursor-default shadow-sm`}
+                  >
+                    {trait}
+                  </motion.span>
+                )
+              })}
             </div>
           </div>
 

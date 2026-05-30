@@ -1,14 +1,18 @@
 "use client"
 // ═══════════════════════════════════════════════
-// HOBBIES SECTION — Anime room style
+// HOBBIES SECTION — Enhanced: emoji deco rotate 360°
+// on hover, card slide-in with stagger
 // ═══════════════════════════════════════════════
 import { useLanguage } from "@/components/language-provider"
 import { PORTFOLIO_CONFIG } from "@/config/constants"
 import { motion } from "framer-motion"
 import { HeartPulse, Gamepad2, BookHeart, TerminalSquare } from "lucide-react"
+import { useState } from "react"
 
 export function Hobbies() {
   const { t } = useLanguage()
+  const [rotateCoffee, setRotateCoffee] = useState(0)
+  const [rotateHeadphones, setRotateHeadphones] = useState(0)
 
   const hobbiesData = [
     {
@@ -64,7 +68,7 @@ export function Hobbies() {
       <div className="flex flex-col md:flex-row items-center gap-12">
         {/* Visual / GIF side */}
         <div className="w-full md:w-1/2 relative flex justify-center">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
             whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
             viewport={{ once: true }}
@@ -72,26 +76,44 @@ export function Hobbies() {
             className="relative bg-white/40 dark:bg-black/40 p-4 rounded-[3rem] shadow-2xl border border-white/50 backdrop-blur-md"
           >
             <div className="absolute -inset-4 bg-gradient-to-tr from-pink-300 via-purple-300 to-indigo-300 dark:from-pink-900/50 dark:via-purple-900/50 dark:to-indigo-900/50 rounded-[3.5rem] blur-xl opacity-50 -z-10" />
-            <img 
-              src={PORTFOLIO_CONFIG.gifs.hobbies} 
-              alt="Cozy anime room" 
+            <img
+              src={PORTFOLIO_CONFIG.gifs.hobbies}
+              alt="Cozy anime room"
               className="w-full h-auto max-w-sm rounded-[2.5rem] object-cover"
             />
-            
-            {/* Small floating deco */}
-            <motion.div 
+
+            {/* Coffee emoji — rotate 360° on hover */}
+            <motion.div
               animate={{ y: [-10, 10, -10], rotate: [-10, 10, -10] }}
               transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-              className="absolute -top-6 -right-6 w-16 h-16 bg-orange-50 dark:bg-orange-100 rounded-full shadow-lg border border-orange-200 flex items-center justify-center text-2xl"
+              onHoverStart={() => setRotateCoffee(prev => prev + 360)}
+              className="absolute -top-6 -right-6 w-16 h-16 bg-orange-50 dark:bg-orange-100 rounded-full shadow-lg border border-orange-200 flex items-center justify-center text-2xl cursor-pointer select-none"
+              whileHover={{ scale: 1.1 }}
             >
-              ☕
+              <motion.span
+                animate={{ rotate: rotateCoffee }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="inline-block"
+              >
+                ☕
+              </motion.span>
             </motion.div>
-            <motion.div 
+
+            {/* Headphones emoji — rotate 360° on hover */}
+            <motion.div
               animate={{ y: [10, -10, 10], rotate: [10, -10, 10] }}
               transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }}
-              className="absolute -bottom-6 -left-6 w-16 h-16 bg-indigo-50 dark:bg-indigo-100 rounded-2xl shadow-lg border border-indigo-200 flex items-center justify-center text-2xl"
+              onHoverStart={() => setRotateHeadphones(prev => prev + 360)}
+              className="absolute -bottom-6 -left-6 w-16 h-16 bg-indigo-50 dark:bg-indigo-100 rounded-2xl shadow-lg border border-indigo-200 flex items-center justify-center text-2xl cursor-pointer select-none"
+              whileHover={{ scale: 1.1 }}
             >
-              🎧
+              <motion.span
+                animate={{ rotate: rotateHeadphones }}
+                transition={{ duration: 0.6, ease: "easeInOut" }}
+                className="inline-block"
+              >
+                🎧
+              </motion.span>
             </motion.div>
           </motion.div>
         </div>
@@ -99,7 +121,7 @@ export function Hobbies() {
         {/* Info side (Shelves) */}
         <div className="w-full md:w-1/2 flex flex-col gap-6">
           {hobbiesData.map((hobby, idx) => {
-            const Icon = hobby.icon;
+            const Icon = hobby.icon
             return (
               <motion.div
                 key={hobby.id}
