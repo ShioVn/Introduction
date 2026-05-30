@@ -80,7 +80,7 @@ export const translations = {
       },
       novel: {
         title: "Web Novels",
-        desc: "Love reading cultivation, isekai, and fantasy stories.",
+        desc: "Love reading mystery, isekai, and fantasy stories.",
       },
       coding: {
         title: "Coding",
@@ -178,7 +178,7 @@ export const translations = {
       },
       novel: {
         title: "Đọc Web Novel",
-        desc: "Mê đọc truyện tu tiên, isekai và fantasy.",
+        desc: "Mê đọc truyện mystery, isekai và fantasy.",
       },
       coding: {
         title: "Lập trình",
